@@ -2,7 +2,7 @@
 import cv2
 import mediapipe as mp
 import time
-
+import serial
 
 class HandDetector():
     def __init__(self,mode = False,max_hands = 2,detection_confidence = 0.5,track_confidence = 0.5):
@@ -36,7 +36,7 @@ class HandDetector():
                         6,(255,0,255),cv2.FILLED 
                     )
         return landmark_list
-        
+            
 def main():
     capture = cv2.VideoCapture(0)
     previous_time = 0

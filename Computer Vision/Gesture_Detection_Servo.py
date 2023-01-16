@@ -1,20 +1,20 @@
 import cv2
-import time
-import math
-import serial
 import numpy as np
+import pyfirmata
 import Hand_Motion_Detector as hmd
-
-
-arduino_data = serial.Serial("com8",115200)
+import math
+import time
 capture = cv2.VideoCapture(0)
-previous_time = 0
-wCam,hCam = 640,480
-capture.set(3,wCam)
-capture.set(4,hCam)
-intensity = 0
-intensity_bar = 400
+capture.set(3,1280)
+capture.set(4,720)
 hand_detector = hmd.HandDetector(detection_confidence=0.7)
+port = "COM8"
+board = pyfirmata.Arduino(port)
+servoPin = board.get_pin('d:9:s')
+previous_time = 0
+angle = 0
+angle_bar = 0
+
 while True:
     success,image = capture.read()
     image = hand_detector.find_hands(image)
@@ -33,20 +33,20 @@ while True:
         length = math.hypot(x2-x1,y2-y1)
         if length<50:
             cv2.circle(image,(cx,cy),15,(0,255,0),cv2.FILLED)
-        intensity = np.interp(length,[50,300],[0,100])
-        brightness = np.interp(length,[50,300],[0,255])
-        intensity_bar = np.interp(length,[50,300],[400,150])
-        print("Intensity: ",int(intensity))
-        print("Brightness: ",int(brightness))
-        encoded_data = str(int(brightness))+'\r'
-        arduino_data.write(encoded_data.encode())
+        angle = np.interp(length,[50,300],[0,180])
+        
+        angle_bar = np.interp(length,[50,300],[400,150])
+        print("Angle: ",int(angle))
+        
+        
         cv2.rectangle(image,(50,150),(85,400),(255,0,255),3)
-        cv2.rectangle(image,(50,int(intensity_bar)),(85,400),(255,0,255),cv2.FILLED)
+        cv2.rectangle(image,(50,int(angle_bar)),(85,400),(255,0,255),cv2.FILLED)
         cv2.putText(image,
-        "Intensity: {} %".format(int(intensity)),(40,450),
+        "Angle: {} deg".format(int(angle)),(40,450),
         cv2.FONT_HERSHEY_DUPLEX,
         1,(0,255,0),3
         )
+        servoPin.write(angle);
     current_time = time.time()
     fps = 1/(current_time-previous_time)
     previous_time = current_time
