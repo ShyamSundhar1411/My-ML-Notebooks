@@ -38,7 +38,7 @@ while True:
         intensity_bar = np.interp(length,[50,300],[400,150])
         print("Intensity: ",int(intensity))
         print("Brightness: ",int(brightness))
-        encoded_data = str(int(brightness))+'\r'
+        encoded_data = str(int(brightness))+","+str(int(x3))+'\r'
         arduino_data.write(encoded_data.encode())
         cv2.rectangle(image,(50,150),(85,400),(255,0,255),3)
         cv2.rectangle(image,(50,int(intensity_bar)),(85,400),(255,0,255),cv2.FILLED)
