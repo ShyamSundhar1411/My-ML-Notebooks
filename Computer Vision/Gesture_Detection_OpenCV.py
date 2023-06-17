@@ -6,7 +6,7 @@ import numpy as np
 import Hand_Motion_Detector as hmd
 
 
-arduino_data = serial.Serial("com8",115200)
+arduino_data = serial.Serial("com7",115200)
 capture = cv2.VideoCapture(0)
 previous_time = 0
 wCam,hCam = 640,480
