@@ -32,11 +32,12 @@ def preprocess_context(conversation_history: List[Union[HumanMessage,AIMessage]]
         conversation_history.pop(0)
 while user_input != "exit":
     conversation_history.append(HumanMessage(content = user_input))
-    
+    preprocess_context(conversation_history)
     result = agent.invoke({
         "messages":conversation_history
     })
     conversation_history = result["messages"]
+    
     user_input = input("Enter your message:")
  
 with open("logging.txt","w") as file:
